@@ -11,16 +11,19 @@ Useful:
         - Easier to store in DB, or integrate in Django
 
 """
+import re
 
 import scrapy
 from itemloaders.processors import TakeFirst, MapCompose
 from w3lib.html import remove_tags
+
 """ Definitions:
 
 Processors:
     TakeFirst: extract the 1st val from a list of vals
     MapCompose: 
-            * Apply a list of funcs to a val. A way to chain funcs together in a single step.
+            * Apply a list of funcs to a val. A way to chain funcs together in a single step
+            * The order the funcs are added are the order they will run
             * Define a pipeline of processing steps that will be applied to each field in the item 
                 as the val is extracted from the selector and loaded on to the item
 Item vs ItemLoader:
@@ -32,9 +35,38 @@ w3lib.html.remove_tags:
     
 """
 
-"""
 
-"""
+def remove_commas(value):
+    return value.replace(",", "")
+
+
+def try_int(value):
+    # some counties don't have a gdp. gdp is a non-digit str
+    try:
+        return int(value)
+    # so if you get an error converting it to a float
+    except ValueError:
+        # then return the initial value
+        return value
+
+
+def try_float(value):
+    try:
+        return float(value)
+    except ValueError:
+        return value
+
+
+def extract_year(value):
+    year = re.findall(r"\d{4}", value)  # 4 consecutive digits
+
+    # don't assume success (value = "-" -> year: falsey/none/"")
+    if not year:
+        return value
+
+    return year
+
+
 class CountriesGdpItem(scrapy.Item):
     # scrapy.Item - exposes a dict like API, scrapy specific specialized dict
     country_name = scrapy.Field(
@@ -48,10 +80,10 @@ class CountriesGdpItem(scrapy.Item):
         output_processor=TakeFirst()
     )
     gdp = scrapy.Field(
-        input_processor=MapCompose(remove_tags, str.strip),
+        input_processor=MapCompose(remove_tags, str.strip, remove_commas, try_float),
         output_processor=TakeFirst()
     )
     year = scrapy.Field(
-        input_processor=MapCompose(remove_tags, str.strip),
+        input_processor=MapCompose(remove_tags, str.strip, extract_year, try_int),
         output_processor=TakeFirst()
     )
