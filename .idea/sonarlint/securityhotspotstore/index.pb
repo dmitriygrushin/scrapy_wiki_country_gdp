@@ -1,0 +1,17 @@
+
+H
+countries_gdp/scrapy.cfg,1\d\1d9930049d3472a44feeeae854acd8c7c93ebd54
+W
+'countries_gdp/countries_gdp/__init__.py,a\6\a6a1eb62773c26abfa7d24a1d7c6bd10417f7dd6
+_
+/countries_gdp/countries_gdp/spiders/__init__.py,2\9\295948ad5d9054bcdf2529ea4e3fa0da3621e7c2
+a
+1venv/Lib/site-packages/scrapy/spiders/__init__.py,3\b\3b9a161cdbe9c8e87e68b94762c691c1fbc434b5
+I
+countries_gdp/__init__.py,a\2\a2f23d4c048fbe80c0e32b59107406788cad7a67
+W
+'countries_gdp/countries_gdp/settings.py,5\d\5d8bfdf057957f20114e704b972bb18ac8e2126c
+Z
+*countries_gdp/countries_gdp/spiders/gdp.py,7\8\7874f1dac45e40831c6a9831559a9403c549251a
+E
+countries_gdp/gdp.csv,9\9\99a23022ac31247a166fee908fe6e084822a9d9e
