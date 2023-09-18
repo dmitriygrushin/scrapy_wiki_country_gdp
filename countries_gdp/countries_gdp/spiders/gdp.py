@@ -13,6 +13,11 @@ to run a spider exec this command in the project dir:
         scrapy is smart enough to figure out you're interested in the the yield {...} fields
     """
 
+# TODO: Data integrity issue example:
+"""{"country_name": "Bermuda", "region": "Americas", "gdp": "—", "year": "7,551"}
+    This has to do with the wiki page's inconsistent markup.
+        - Visually looks correct, but when scraped will lead to data integrity issues
+        - So, if gdp is mission then exclude it from the data set"""
 
 class GdpSpider(scrapy.Spider):
     name = "gdp"
