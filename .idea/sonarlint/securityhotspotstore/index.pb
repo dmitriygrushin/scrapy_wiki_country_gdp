@@ -15,3 +15,9 @@ Z
 *countries_gdp/countries_gdp/spiders/gdp.py,7\8\7874f1dac45e40831c6a9831559a9403c549251a
 E
 countries_gdp/gdp.csv,9\9\99a23022ac31247a166fee908fe6e084822a9d9e
+T
+$countries_gdp/countries_gdp/items.py,a\5\a52b42da29ede9dd7b8751b582bf198eed46b8e2
+F
+countries_gdp/gdp.json,b\0\b0816f421442e94e95f09659a2dedf45a02c9c19
+X
+(countries_gdp/countries_gdp/pipelines.py,1\d\1d540c851fd88292b3300871ca59a2b041e694dd

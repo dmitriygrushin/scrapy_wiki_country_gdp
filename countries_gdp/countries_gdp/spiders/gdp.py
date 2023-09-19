@@ -13,11 +13,6 @@ to run a spider exec this command in the project dir:
         scrapy is smart enough to figure out you're interested in the the yield {...} fields
     """
 
-# TODO: Data integrity issue example:
-"""{"country_name": "Bermuda", "region": "Americas", "gdp": "—", "year": "7,551"}
-    This has to do with the wiki page's inconsistent markup.
-        - Visually looks correct, but when scraped will lead to data integrity issues
-        - So, if gdp is mission then exclude it from the data set"""
 
 class GdpSpider(scrapy.Spider):
     name = "gdp"
@@ -33,7 +28,10 @@ class GdpSpider(scrapy.Spider):
         # visually/functionally looks like selectolax lib, but it's not
         for country in response.css("table.wikitable.sortable tbody tr:not([class])"):  # not([attr]): elem without attr
             # type(country): 'scrapy.selector.unified.Selector'
-            # functionally this is the same as versions below
+            # functionally this is the same as versions below | regular way or item or item-loaders + pipelines, ...
+            #   everything can be done in this method, but it's better to have separation of concerns
+            # order of executions seems to be:
+            #   scrapy crawl gdp -O gdp.json -> yield the item (here) -> item-loaders -> pipeline post-processing
             item = ItemLoader(item=CountriesGdpItem(), selector=country)
 
             # don't need ::text or get() it gets taken care of in the ItemLoader processors
@@ -44,7 +42,10 @@ class GdpSpider(scrapy.Spider):
 
             yield item.load_item()
 
-
+            """ missing github 
+            ... -> github xpath selectors(main part before the extra scrapy stuff used for maintainability/scaling) 
+                    -> outputting data -> ... -> pipelined data validation -> ...
+            """
 
             """ "item" way of doing things vs the above or the default below
             # nothing wrong with this, but it does NOT scale very well compared to "ItemLoader" way
@@ -59,6 +60,12 @@ class GdpSpider(scrapy.Spider):
             yield item
             """
             """ inside of the for loop before using "items" using items is functionally the same, it provides structure
+            
+           # what's being achieved with scrapy's items, item-loaders, pipelines(for post-processing) 
+            - can be done here the good old fashioned way, but it wouldn't scale as well
+            - so after getting the item you could do the post-processing here before returning
+                which is functionally the same as using pipelines and item-loaders
+            
             yield {
                 # ::text is a pseudo selector (scrapy specific selector)
                 "country_name": country.css("td:nth-child(1) a::text").get(),
