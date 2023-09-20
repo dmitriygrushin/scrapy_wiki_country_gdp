@@ -10,6 +10,8 @@ from scrapy.exceptions import DropItem
 import sqlite3
 
 """ Why is a Pipeline?
+# Pipeline's class method call order: __init__, open_spider, process_item (called n-times), close_spider
+
 Pipeline: Python class that implements a method process_item, 
     it takes the "item" that comes out of the "loading process" as input
     returns an item, (un-modded), (modded), (checks, modded), (checks, item should NOT process further)
@@ -61,11 +63,28 @@ class SaveToDatabasePipeline:
 
     def process_item(self, item, spider):
         # to help prevent sql injection attacks it's better to NOT set the VALUES manually
+
+        # IMPORTANT: if the countries_gdp.db file exists and already contains countries then adding an existing
+        # country will result in a dupe(exception) since the primary key is the country name.
+        # So, if you run "scrapy crawl gdp -O gdp.json" the exception will cause the gdp.json to be empty
         self.con.execute("""INSERT INTO countries_gdp (country_name, region, gdp, year) 
                             VALUES (?, ?, ?, ?)""",
-                     (item["country_name"], item["region"], item["gdp"], item["year"]))
+                         (item["country_name"], item["region"], item["gdp"], item["year"]))
         self.con.commit()
+        return item
 
     def close_spider(self):
         # after the scraping is done close the connection
         self.con.close()
+
+
+class NoDuplicateCountryPipeline:
+    def __init__(self):
+        self.countries_seen = set()
+
+    def process_item(self, item, spider):
+        if item["country_name"] in self.countries_seen:
+            raise DropItem(f"Duplicate Country found: {item}")
+        else:
+            self.countries_seen.add(item["country_name"])
+            return item

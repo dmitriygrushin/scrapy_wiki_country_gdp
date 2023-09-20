@@ -34,6 +34,7 @@ class GdpSpider(scrapy.Spider):
             #   scrapy crawl gdp -O gdp.json -> yield the item (here) -> item-loaders -> pipeline post-processing
             item = ItemLoader(item=CountriesGdpItem(), selector=country)
 
+
             # don't need ::text or get() it gets taken care of in the ItemLoader processors
             item.add_css("country_name", "td:nth-child(1) a")
             item.add_css("region", "td:nth-child(2) a")

@@ -66,7 +66,9 @@ ROBOTSTXT_OBEY = True
 ITEM_PIPELINES = {
     # 0 - 1000 is the range for the order # i.e. the 100, 300
     "countries_gdp.pipelines.CountriesGdpPipeline": 100,  # data validation
-    "countries_gdp.pipelines.SaveToDatabasePipeline": 200  # add data to DB
+    "countries_gdp.pipelines.NoDuplicateCountryPipeline": 200,  # remove duplicate countries
+    "countries_gdp.pipelines.SaveToDatabasePipeline": 300  # add data to DB
+
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
